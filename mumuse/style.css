@@ -1,0 +1,206 @@
+*,
+*::before,
+*::after {
+box-sizing: border-box;
+}
+
+/* Déclaration de variables CSS pour une gestion centralisée des couleurs et transitions */
+:root {
+--primary-color: #8A2BE2;       /* Violet */
+--secondary-color: #FF69B4;     /* Rose */
+--bg-dark: #111;                /* Fond sombre du formulaire */
+--bg-light: #222;               /* Fond des champs */
+--text-white: #fff;             /* Texte blanc */
+--error-color: #FF69B4;         /* Couleur des messages d'erreur */
+--transition-speed: 0.3s;       /* Vitesse des transitions */
+}
+
+/* Corps de page : fond avec image, avec une animation de panoramique léger */
+body {
+	background: url("beauFondEcran.jpg") no-repeat center center/cover;
+	color: var(--text-white);
+	font-family: Arial, sans-serif;
+	font-size: 14px;
+	margin: 0;
+	padding: 20px;
+	animation: bgPan 20s infinite alternate;
+}
+
+/* Animation de panoramique de l'arrière-plan */
+@keyframes bgPan {
+	from {
+		background-position: center;
+	}
+	to {
+		background-position: top center;
+	}
+}
+
+/* Conteneur du formulaire avec animation d'apparition et ombre portée */
+form {
+	width: 90%;
+	max-width: 800px;
+	margin: 30px auto;
+	padding: 20px;
+	background-color: var(--bg-dark);
+	border: 1px solid #333;
+	border-radius: 8px;
+	position: relative;
+	overflow: hidden;
+	box-shadow: 0 6px 12px rgba(0, 0, 0, 0.7);
+	animation: formAppear 1s ease-out;
+}
+
+/* Animation d'apparition (slide-in) du formulaire */
+@keyframes formAppear {
+from {
+	opacity: 0;
+	transform: translateY(-20px);
+}
+to {
+	opacity: 1;
+	transform: translateY(0);
+}
+}
+
+/* Pseudo-élément pour un effet de contour animé en dégradé sur le formulaire */
+form::before {
+	content: "";
+	position: absolute;
+	top: -2px;
+	left: -2px;
+	right: -2px;
+	bottom: -2px;
+	background: linear-gradient(45deg, var(--primary-color), var(--secondary-color), var(--primary-color));
+	background-size: 400% 400%;
+	z-index: -1;
+	filter: blur(4px);
+	opacity: 0;
+	transition: opacity var(--transition-speed) ease-in-out;
+	animation: gradientShift 5s ease infinite;
+}
+
+form:hover::before {
+	opacity: 1;
+}
+
+/* Animation pour faire varier la position du gradient */
+@keyframes gradientShift {
+	0% { background-position: 0% 50%; }
+	50% { background-position: 100% 50%; }
+	100% { background-position: 0% 50%; }
+}
+
+/* Groupe de champ */
+.form-group {
+	margin-bottom: 20px;
+}
+
+/* Labels centrés avec une légère pulsation et ombre portée */
+label {
+	display: block;
+	text-align: center;
+	font-size: 18px;
+	color: var(--primary-color);
+	margin-bottom: 5px;
+	text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+	animation: labelPulse 2s infinite;
+}
+
+/* Animation de pulsation pour les labels */
+@keyframes labelPulse {
+	0%, 100% { transform: scale(1); }
+	50% { transform: scale(1.05); }
+}
+
+/* Styles communs pour les inputs, textarea et select */
+input[type="text"],
+input[type="email"],
+input[type="file"],
+textarea,
+select {
+	width: 100%;
+	padding: 12px;
+	background-color: var(--bg-light);
+	color: var(--text-white);
+	border: 1px solid #555;
+	border-radius: 4px;
+	outline: none;
+	transition: border-color var(--transition-speed) ease,
+					box-shadow var(--transition-speed) ease,
+					transform var(--transition-speed) ease;
+}
+
+/* Effet de focus sur les champs : lueur rose et légère augmentation de taille */
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="file"]:focus,
+textarea:focus,
+select:focus {
+	border-color: var(--secondary-color);
+	box-shadow: 0 0 10px rgba(255,105,180,0.8);
+	transform: scale(1.02);
+}
+
+/* Désactivation du redimensionnement du textarea */
+textarea {
+	resize: none;
+}
+
+/* Stylisation du select et de ses options */
+select {
+	background-color: var(--bg-light);
+	color: var(--text-white);
+}
+
+select option {
+	background-color: var(--bg-light);
+	color: var(--text-white);
+}
+
+/* Bouton de soumission avec animation de rebond */
+button[type="submit"] {
+	background-color: var(--primary-color);
+	color: var(--text-white);
+	padding: 12px 25px;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	font-size: 16px;
+	transition: background-color var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+	display: block;
+	margin: 20px auto 0 auto;
+	animation: buttonBounce 2s infinite;
+}
+
+/* Animation de rebond pour le bouton */
+@keyframes buttonBounce {
+	0%, 100% { transform: translateY(0); }
+	50% { transform: translateY(-5px); }
+}
+
+button[type="submit"]:hover {
+	background-color: var(--secondary-color);
+	box-shadow: 0 0 12px rgba(255,105,180,0.8);
+}
+
+/* Messages d'erreur avec animation de fondu et rebond */
+.error {
+	text-align: center;
+	font-size: 12px;
+	margin-top: 5px;
+	animation: fadeIn 0.5s forwards, errorBounce 0.5s forwards;
+}
+
+/* Animation de fondu pour les erreurs */
+@keyframes fadeIn {
+	from { opacity: 0; }
+	to { opacity: 1; }
+}
+
+/* Animation de rebond pour les erreurs */
+@keyframes errorBounce {
+	0% { transform: translateY(-10px); }
+	50% { transform: translateY(0); }
+	100% { transform: translateY(-5px); }
+}
