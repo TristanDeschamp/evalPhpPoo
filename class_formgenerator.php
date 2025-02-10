@@ -167,13 +167,49 @@ class FormGenerator implements FormGeneratorInterface {
 					if (isset($attributes['options']) && is_array($attributes['options'])) {
 						// Parcours des options définies dans l'attribut "options"
 						foreach ($attributes['options'] as $option) {
-							// Si la valeur soumise correspond à l'option, on marque celle-ci comme sélectionnée
+							// Si la valeur soumise correspond à l'option, je marque celle-ci comme sélectionnée
 							$selected = ($option == $value) ? 'selected' : '';
 							echo '<option value="' . strip_tags($option) . '" ' . $selected . '>' . strip_tags($option) . '</option>';
 						}
 					}
-					echo '</select>';
-					break;
+				echo '</select>';
+				break;
+				case 'radio':
+					if (isset($attributes['options']) && is_array($attributes['options'])) {
+						foreach ($attributes['options'] as $optionValue => $optionLabel) {
+							// Vérifier si cette option doit être pré-sélectionnée
+							$checked = ($optionValue == $value) ? 'checked' : '';
+							// Chaque radio peut avoir un id unique
+							echo '<div>';
+							echo '<input type="radio" name="' . strip_tags($name) . '" id="' . strip_tags($id . '_' . $optionValue) . '" value="' . strip_tags($optionValue) . '" ' . $checked . ' ' . $attrString . '>';
+							echo '<label for="' . strip_tags($id . '_' . $optionValue) . '">' . strip_tags($optionLabel) . '</label>';
+							echo '</div>';
+						}
+					}
+				break;
+
+				case 'checkbox':
+					// S'il y a plusieurs options, j'attend un tableau de valeurs
+					if (isset($attributes['options']) && is_array($attributes['options'])) {
+						// Assurer que la valeur récupérée est un tableau
+						if (!is_array($value)) {
+							$value = [$value];
+						}
+						foreach ($attributes['options'] as $optionValue => $optionLabel) {
+							$checked = in_array($optionValue, $value) ? 'checked' : '';
+							echo '<div>';
+							// On ajoute [] à l'attribut name pour récupérer un tableau en cas de sélection multiple
+							echo '<input type="checkbox" name="' . strip_tags($name) . '[]" id="' . strip_tags($id . '_' . $optionValue) . '" value="' . strip_tags($optionValue) . '" ' . $checked . ' ' . $attrString . '>';
+							echo '<label for="' . strip_tags($id . '_' . $optionValue) . '">' . strip_tags($optionLabel) . '</label>';
+							echo '</div>';
+						}
+					} else {
+						// Sinon, c'est une checkbox unique
+						$checked = ($value) ? 'checked' : '';
+						echo '<input type="checkbox" name="' . strip_tags($name) . '" id="' . strip_tags($id) . '" value="1" ' . $checked . ' ' . $attrString . '>';
+					}
+				break;
+			
 				default:
 					// Par défaut, on affiche un champ de type texte
 					echo '<input type="text" name="' . strip_tags($name) . '" id="' . $id . '" value="' . strip_tags($value) . '" ' . $attrString . '>';
@@ -181,7 +217,7 @@ class FormGenerator implements FormGeneratorInterface {
 
 			// Affichage éventuel d'un message d'erreur sous le champ (en rouge)
 			if (isset(self::$errors[$name])) {
-					echo '<div class="error" style="color:red;">' . strip_tags(self::$errors[$name]) . '</div>';
+				echo '<div class="error" style="color:red;">' . strip_tags(self::$errors[$name]) . '</div>';
 			}
 			echo '</div>'; // Fin du conteneur du champ
 		}
@@ -260,8 +296,8 @@ class FormGenerator implements FormGeneratorInterface {
 					if (is_uploaded_file($file['tmp_name'])) {
 						// Vérification de la taille maximale du fichier (2 Mo)
 						if ($file['size'] > 2097152) { // 2 Mo en octets
-								self::$errors[$name] = 'La taille du fichier dépasse 2 Mo.';
-								continue;
+							self::$errors[$name] = 'La taille du fichier dépasse 2 Mo.';
+							continue;
 						}
 
 						 // Récupération de l'extension du fichier et conversion en minuscule
@@ -269,25 +305,25 @@ class FormGenerator implements FormGeneratorInterface {
 						$allowedExtensions = ['.jpeg', '.png', '.pdf'];
 						// Vérification que l'extension est parmi celles autorisées
 						if (!in_array($extension, $allowedExtensions)) {
-								self::$errors[$name] = 'Type de fichier non autorisé. Seuls JPEG, PNG et PDF sont autorisés.';
-								continue;
+							self::$errors[$name] = 'Type de fichier non autorisé. Seuls JPEG, PNG et PDF sont autorisés.';
+							continue;
 						}
 						// Préparation du dossier de destination ("uploads") pour enregistrer le fichier
 						$destinationDir = __DIR__ . '/uploads';
 						// Création du dossier si celui-ci n'existe pas
 						if (!is_dir($destinationDir)) {
-								mkdir($destinationDir, 0777, true);
+							mkdir($destinationDir, 0777, true);
 						}
 						// Définition du chemin complet de destination du fichier
 						$destination = $destinationDir . '/' . basename($file['name']);
 						// Déplacement du fichier depuis le répertoire temporaire vers le dossier "uploads"
 						if (!move_uploaded_file($file['tmp_name'], $destination)) {
-								self::$errors[$name] = 'Erreur lors du téléchargement du fichier.';
+							self::$errors[$name] = 'Erreur lors du téléchargement du fichier.';
 						}
 					} else {
 						// Si aucun fichier n'est uploadé alors que le champ est requis, enregistre une erreur
 						if (isset($attributes['required']) && $attributes['required']) {
-								self::$errors[$name] = 'Veuillez fournir un fichier.';
+							self::$errors[$name] = 'Veuillez fournir un fichier.';
 						}
 					}
 				} else {
